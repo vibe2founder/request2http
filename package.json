@@ -1,9 +1,19 @@
 {
-  "name": "@purecore/axios",
+  "name": "@purecore/reqify",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "author": "Suissa",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suissa/purecore-reqify"
+  },
+  "keywords": [
+    "api",
+    "purecore"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "node --test --loader tsx --enable-source-maps tests/*.test.ts"
