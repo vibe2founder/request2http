@@ -12,53 +12,53 @@ export const asStatusCode = (status: number): StatusCode => status as StatusCode
 export const asHeaderName = (name: string): HeaderName => name as HeaderName;
 export const asHeaderValue = (value: string): HeaderValue => value as HeaderValue;
 
-export type TsAxiosHeaders = Record<HeaderName, HeaderValue> | Record<string, string>;
+export type ReqifyHeaders = Record<HeaderName, HeaderValue> | Record<string, string>;
 
-export interface TsAxiosRequestConfig<D = any> {
+export interface ReqifyRequestConfig<D = any> {
   url: Url;
   method?: HttpMethod;
-  headers?: TsAxiosHeaders;
+  headers?: ReqifyHeaders;
   data?: D;
   params?: Record<string, string | number | boolean>;
   responseType?: 'json' | 'text' | 'stream';
 }
 
-export interface TsAxiosResponse<T = any, D = any> {
+export interface ReqifyResponse<T = any, D = any> {
   data: T;
   status: StatusCode;
   statusText: string;
   headers: Headers;
-  config: TsAxiosRequestConfig<D>;
+  config: ReqifyRequestConfig<D>;
   request: Response;
 }
 
-export interface TsAxiosInstance {
-  <T = any, D = any>(config: TsAxiosRequestConfig<D>): Promise<TsAxiosResponse<T, D>>;
-  <T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url'>): Promise<TsAxiosResponse<T, D>>;
+export interface ReqifyInstance {
+  <T = any, D = any>(config: ReqifyRequestConfig<D>): Promise<ReqifyResponse<T, D>>;
+  <T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url'>): Promise<ReqifyResponse<T, D>>;
 
-  get<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
-  delete<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
-  head<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
-  options<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
+  get<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+  delete<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+  head<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+  options<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
   
-  post<T = any, D = any>(url: Url, data?: D, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<TsAxiosResponse<T, D>>;
-  put<T = any, D = any>(url: Url, data?: D, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<TsAxiosResponse<T, D>>;
-  patch<T = any, D = any>(url: Url, data?: D, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<TsAxiosResponse<T, D>>;
+  post<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
+  put<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
+  patch<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
 }
 
 
-function createTsAxiosInstance(): TsAxiosInstance {
+function createReqifyInstance(): ReqifyInstance {
   
-  const tsaxiosCore = async <T = any, D = any>(
-    urlOrConfig: Url | TsAxiosRequestConfig<D>,
-    config?: Omit<TsAxiosRequestConfig<D>, 'url'>
-  ): Promise<TsAxiosResponse<T, D>> => {
+  const reqifyCore = async <T = any, D = any>(
+    urlOrConfig: Url | ReqifyRequestConfig<D>,
+    config?: Omit<ReqifyRequestConfig<D>, 'url'>
+  ): Promise<ReqifyResponse<T, D>> => {
     
-    let finalConfig: TsAxiosRequestConfig<D>;
+    let finalConfig: ReqifyRequestConfig<D>;
     if (typeof urlOrConfig === 'string') {
       finalConfig = { ...config, url: urlOrConfig as Url };
     } else {
-      finalConfig = urlOrConfig as TsAxiosRequestConfig<D>;
+      finalConfig = urlOrConfig as ReqifyRequestConfig<D>;
     }
 
     const {
@@ -126,7 +126,7 @@ function createTsAxiosInstance(): TsAxiosInstance {
     };
   };
 
-  const instance = tsaxiosCore as TsAxiosInstance;
+  const instance = reqifyCore as ReqifyInstance;
 
   instance.get = (url, config) => instance({ ...config, url, method: asMethod('GET') });
   instance.delete = (url, config) => instance({ ...config, url, method: asMethod('DELETE') });
@@ -140,5 +140,5 @@ function createTsAxiosInstance(): TsAxiosInstance {
   return instance;
 }
 
-export const tsaxios = createTsAxiosInstance();
-export default tsaxios;
+export const reqify = createReqifyInstance();
+export default reqify;

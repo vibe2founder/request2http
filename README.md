@@ -1,3 +1,1 @@
-# @purecore/axios
-
-Igualzinho ao axios
+# @purecore/reqify
