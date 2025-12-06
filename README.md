@@ -22,25 +22,30 @@ Tired of heavy HTTP libraries? **Reqify** is a lightweight, native Node.js fetch
 
 <table>
   <tr>
-    <td align="center" width="25%">
+    <td align="center" width="20%">
       <h3>⚡</h3>
       <strong>Native Fetch</strong><br>
       <sub>Zero dependencies, pure Node.js</sub>
     </td>
-    <td align="center" width="25%">
+    <td align="center" width="20%">
       <h3>🔄</h3>
       <strong>Drop-in Replacement</strong><br>
       <sub>Same axios interface</sub>
     </td>
-    <td align="center" width="25%">
+    <td align="center" width="20%">
       <h3>🎯</h3>
       <strong>TypeScript First</strong><br>
       <sub>Full type safety</sub>
     </td>
-    <td align="center" width="25%">
+    <td align="center" width="20%">
       <h3>🚀</h3>
       <strong>Modern ES Modules</strong><br>
       <sub>Node.js 18+ ready</sub>
+    </td>
+    <td align="center" width="20%">
+      <h3>🔧</h3>
+      <strong>Auto-Healing</strong><br>
+      <sub>Smart error recovery</sub>
     </td>
   </tr>
 </table>
@@ -139,6 +144,51 @@ interface ReqifyResponse<T = any, D = any> {
   request: Response;
 }
 ```
+
+## 🔧 Auto-Healing
+
+Reqify includes a powerful **auto-healing** system that automatically detects and recovers from common HTTP errors:
+
+```typescript
+// Auto-healing is enabled by default
+const response = await reqify.get('https://api.example.com/data', {
+  maxRetries: 3,      // Number of retry attempts (default: 3)
+  timeout: 5000,      // Initial timeout in ms (default: 5000)
+  autoHeal: true      // Enable auto-healing (default: true)
+});
+
+// Check if the request was healed
+if (response.healed) {
+  console.log('✅ Request was automatically healed!');
+  console.log('Message:', response.healMessage);
+  // Example: "Rate limited - retry after 1000ms"
+}
+```
+
+### Supported Error Recovery
+
+- **401 Unauthorized**: Increases timeout and retries
+- **403 Forbidden**: Adjusts timeout for permission checks
+- **413 Payload Too Large**: Doubles timeout for large responses
+- **422 Validation Error**: Creates values based on expected types
+- **429 Rate Limit**: Respects `Retry-After` header or uses exponential backoff
+- **Timeout**: Progressively increases timeout (max 30s)
+- **Network Errors**: Retries with increased timeout
+- **Parse Errors**: Handles malformed JSON responses
+
+### Value Creation Heuristic
+
+When validation fails (422 error), Reqify automatically creates values based on the expected type:
+
+```typescript
+import { createValueFromType } from '@purecore/reqify';
+
+createValueFromType('expected email');  // "example@domain.com"
+createValueFromType('must be number');  // 0
+createValueFromType('expected uuid');   // "00000000-0000-0000-0000-000000000000"
+```
+
+📖 **[Read the full Auto-Healing documentation](docs/AUTO_HEALING.md)**
 
 ## 💡 Advanced Usage
 
