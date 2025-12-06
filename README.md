@@ -169,7 +169,7 @@ if (response.healed) {
 
 - **401 Unauthorized**: Increases timeout and retries
 - **403 Forbidden**: Adjusts timeout for permission checks
-- **413 Payload Too Large**: Doubles timeout for large responses
+- **413 Payload Too Large**: Removes optional fields from payload (description, metadata, avatar, etc.)
 - **422 Validation Error**: Creates values based on expected types
 - **429 Rate Limit**: Respects `Retry-After` header or uses exponential backoff
 - **Timeout**: Progressively increases timeout (max 30s)

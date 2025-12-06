@@ -18,8 +18,9 @@ O Reqify possui um sistema nativo de **auto-healing** que detecta e corrige auto
 
 #### 413 Payload Too Large
 - **Detecção**: Status 413 ou mensagem contendo "413"
-- **Ação**: Dobra o timeout
-- **Uso**: Dá mais tempo para processar payloads grandes
+- **Ação**: Remove campos opcionais do payload (description, metadata, avatar, etc.)
+- **Uso**: Reduz o tamanho do payload para caber nos limites do servidor
+- **Nota**: Só funciona com requisições POST/PUT/PATCH que enviam dados
 
 #### 422 Unprocessable Entity
 - **Detecção**: Status 422 ou mensagem contendo "422"

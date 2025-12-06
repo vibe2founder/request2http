@@ -73,12 +73,19 @@ describe('Auto-Healing Tests', () => {
   });
 
   describe('413 Payload Too Large Healing', () => {
-    it('deve aumentar timeout após 413', async () => {
+    it('deve remover campos opcionais do payload após 413', async () => {
       let callCount = 0;
+      let lastPayload: any = null;
       
       const originalFetch = global.fetch;
-      global.fetch = mock.fn(async () => {
+      global.fetch = mock.fn(async (url: string, options?: any) => {
         callCount++;
+        
+        // Capturar o payload enviado
+        if (options?.body) {
+          lastPayload = JSON.parse(options.body);
+        }
+        
         if (callCount === 1) {
           return new Response(JSON.stringify({ error: 'Payload too large' }), {
             status: 413,
@@ -91,14 +98,59 @@ describe('Auto-Healing Tests', () => {
       }) as any;
 
       try {
-        const response = await reqify.get(asUrl('https://api.example.com/data'), {
-          timeout: 1000,
-          maxRetries: 2
-        });
+        const response = await reqify.post(
+          asUrl('https://api.example.com/data'),
+          {
+            name: 'Test',
+            email: 'test@example.com',
+            description: 'Long description that makes payload large',
+            metadata: { extra: 'data' },
+            avatar: 'base64-encoded-image-data'
+          },
+          {
+            timeout: 1000,
+            maxRetries: 2
+          }
+        );
 
         assert.strictEqual(callCount, 2);
         assert.strictEqual(response.healed, true);
-        assert.ok(response.healMessage?.includes('Payload too large'));
+        assert.ok(response.healMessage?.includes('removed optional fields'));
+        
+        // Verificar que campos opcionais foram removidos
+        assert.ok(!lastPayload.description, 'description deve ser removido');
+        assert.ok(!lastPayload.metadata, 'metadata deve ser removido');
+        assert.ok(!lastPayload.avatar, 'avatar deve ser removido');
+        
+        // Verificar que campos essenciais foram mantidos
+        assert.strictEqual(lastPayload.name, 'Test');
+        assert.strictEqual(lastPayload.email, 'test@example.com');
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
+    it('não deve tentar novamente se não houver payload para reduzir', async () => {
+      let callCount = 0;
+      
+      const originalFetch = global.fetch;
+      global.fetch = mock.fn(async () => {
+        callCount++;
+        return new Response(JSON.stringify({ error: 'Payload too large' }), {
+          status: 413,
+          statusText: 'Payload Too Large'
+        });
+      }) as any;
+
+      try {
+        await reqify.get(asUrl('https://api.example.com/data'), {
+          timeout: 1000,
+          maxRetries: 2
+        });
+        
+        assert.fail('Deveria ter lançado erro');
+      } catch (error: any) {
+        assert.strictEqual(callCount, 1, 'Não deve tentar novamente sem payload');
       } finally {
         global.fetch = originalFetch;
       }
