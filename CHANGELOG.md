@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3] - 2026-01-03
+
+### ✅ Tests
+
+- Added `tests/core.test.ts` covering standard HTTP methods and configuration
+- Added advanced healing scenarios (nested payload reduction) to `tests/heal.test.ts`
+
 ## [0.3.2] - 2026-01-02
 
 ### 🔧 Chore

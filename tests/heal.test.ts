@@ -525,4 +525,62 @@ describe("Auto-Healing Tests", () => {
       }
     });
   });
+
+  describe("Nested Payload Reduction (Advanced 413)", () => {
+    it("deve remover campos opcionais em objetos aninhados", async () => {
+      let callCount = 0;
+      let lastPayload: any = null;
+      const originalFetch = global.fetch;
+
+      global.fetch = mock(async (url, options) => {
+        callCount++;
+        if (options?.body) lastPayload = JSON.parse(options.body);
+
+        if (callCount === 1) {
+          return new Response(JSON.stringify({ error: "Payload too large" }), {
+            status: 413,
+          });
+        }
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
+      });
+
+      try {
+        const complexData = {
+          title: "Project X",
+          metadata: {
+            created: "2024",
+            description: "Should be removed",
+            author: {
+              name: "Bot",
+              avatar: "base64-image-should-be-removed",
+            },
+          },
+          tags: ["a", "b", "c"], // tags is in optionalFields list
+        };
+
+        const response = await reqify.post(
+          asUrl("https://api.example.com/nested"),
+          complexData,
+          {
+            maxRetries: 1,
+          }
+        );
+
+        // assert is mostly used in this file, but my snippet used expect.
+        // I should stick to one style or import expects.
+        // The file imports 'assert' from node:assert and doesn't explicitly import expect from bun:test
+        // Wait, heal.test.ts uses `import assert ...`.
+        // I should convert my snippet to use assert to match the file style.
+
+        assert.strictEqual(response.healed, true);
+        assert.strictEqual(callCount, 2);
+
+        assert.strictEqual(lastPayload.metadata, undefined);
+        assert.strictEqual(lastPayload.tags, undefined);
+        assert.strictEqual(lastPayload.title, "Project X");
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+  });
 });
