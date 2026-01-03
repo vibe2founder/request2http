@@ -12,12 +12,12 @@ export const asStatusCode = (status: number): StatusCode => status as StatusCode
 export const asHeaderName = (name: string): HeaderName => name as HeaderName;
 export const asHeaderValue = (value: string): HeaderValue => value as HeaderValue;
 
-export type ReqifyHeaders = Record<HeaderName, HeaderValue> | Record<string, string>;
+export type reqify = Record<HeaderName, HeaderValue> | Record<string, string>;
 
-export interface ReqifyRequestConfig<D = any> {
+export interface reqify<D = any> {
   url: Url;
   method?: HttpMethod;
-  headers?: ReqifyHeaders;
+  headers?: reqify;
   data?: D;
   params?: Record<string, string | number | boolean>;
   responseType?: 'json' | 'text' | 'stream';
@@ -27,42 +27,42 @@ export interface ReqifyRequestConfig<D = any> {
   autoHeal?: boolean;
 }
 
-export interface ReqifyResponse<T = any, D = any> {
+export interface one-request-4-allResponse<T = any, D = any> {
   data: T;
   status: StatusCode;
   statusText: string;
   headers: Headers;
-  config: ReqifyRequestConfig<D>;
+  config: reqify<D>;
   request: Response;
   healed?: boolean;
   healMessage?: string;
 }
 
-export interface ReqifyInstance {
-  <T = any, D = any>(config: ReqifyRequestConfig<D>): Promise<ReqifyResponse<T, D>>;
-  <T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url'>): Promise<ReqifyResponse<T, D>>;
+export interface one-request-4-allInstance {
+  <T = any, D = any>(config: reqify<D>): Promise<one-request-4-allResponse<T, D>>;
+  <T = any, D = any>(url: Url, config?: Omit<reqify<D>, 'url'>): Promise<one-request-4-allResponse<T, D>>;
 
-  get<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
-  delete<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
-  head<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
-  options<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+  get<T = any, D = any>(url: Url, config?: Omit<reqify<D>, 'url' | 'method'>): Promise<one-request-4-allResponse<T, D>>;
+  delete<T = any, D = any>(url: Url, config?: Omit<reqify<D>, 'url' | 'method'>): Promise<one-request-4-allResponse<T, D>>;
+  head<T = any, D = any>(url: Url, config?: Omit<reqify<D>, 'url' | 'method'>): Promise<one-request-4-allResponse<T, D>>;
+  options<T = any, D = any>(url: Url, config?: Omit<reqify<D>, 'url' | 'method'>): Promise<one-request-4-allResponse<T, D>>;
   
-  post<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
-  put<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
-  patch<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
+  post<T = any, D = any>(url: Url, data?: D, config?: Omit<reqify<D>, 'url' | 'method' | 'data'>): Promise<one-request-4-allResponse<T, D>>;
+  put<T = any, D = any>(url: Url, data?: D, config?: Omit<reqify<D>, 'url' | 'method' | 'data'>): Promise<one-request-4-allResponse<T, D>>;
+  patch<T = any, D = any>(url: Url, data?: D, config?: Omit<reqify<D>, 'url' | 'method' | 'data'>): Promise<one-request-4-allResponse<T, D>>;
 }
 
 // Tipos para auto-healing
 export interface HealContext {
   error: any;
-  config: ReqifyRequestConfig;
+  config: reqify;
   response?: Response;
   attempt: number;
 }
 
 export interface HealResult {
   shouldRetry: boolean;
-  config?: ReqifyRequestConfig;
+  config?: reqify;
   message?: string;
   data?: any;
 }
@@ -132,7 +132,7 @@ export function createValueFromType(errorMessage: string, expectedType?: string)
 }
 
 /**
- * Auto-healer nativo do Reqify
+ * Auto-healer nativo do one-request-4-all
  * Detecta e corrige automaticamente erros comuns
  */
 export async function autoHeal(context: HealContext): Promise<HealResult> {
@@ -244,18 +244,18 @@ export async function autoHeal(context: HealContext): Promise<HealResult> {
   return { shouldRetry: false, message: 'No healing strategy available' };
 }
 
-function createReqifyInstance(): ReqifyInstance {
+function createone-request-4-allInstance(): one-request-4-allInstance {
   
   const reqifyCore = async <T = any, D = any>(
-    urlOrConfig: Url | ReqifyRequestConfig<D>,
-    config?: Omit<ReqifyRequestConfig<D>, 'url'>
-  ): Promise<ReqifyResponse<T, D>> => {
+    urlOrConfig: Url | reqify<D>,
+    config?: Omit<reqify<D>, 'url'>
+  ): Promise<one-request-4-allResponse<T, D>> => {
     
-    let finalConfig: ReqifyRequestConfig<D>;
+    let finalConfig: reqify<D>;
     if (typeof urlOrConfig === 'string') {
       finalConfig = { ...config, url: urlOrConfig as Url };
     } else {
-      finalConfig = urlOrConfig as ReqifyRequestConfig<D>;
+      finalConfig = urlOrConfig as reqify<D>;
     }
 
     const maxRetries = finalConfig.maxRetries ?? 3;
@@ -397,7 +397,7 @@ function createReqifyInstance(): ReqifyInstance {
     throw lastError || new Error('Max retries exceeded');
   };
 
-  const instance = reqifyCore as ReqifyInstance;
+  const instance = reqifyCore as one-request-4-allInstance;
 
   instance.get = (url, config) => instance({ ...config, url, method: asMethod('GET') });
   instance.delete = (url, config) => instance({ ...config, url, method: asMethod('DELETE') });
@@ -411,5 +411,5 @@ function createReqifyInstance(): ReqifyInstance {
   return instance;
 }
 
-export const reqify = createReqifyInstance();
+export const reqify = createone-request-4-allInstance();
 export default reqify;

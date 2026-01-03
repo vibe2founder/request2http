@@ -5,7 +5,7 @@
  * Uso: node jscurl.js "await req.get('https://api.github.com/users/octocat')"
  */
 
-const util = require("util");
+import util from "node:util";
 
 // Configuração de cores para o terminal
 const colors = {
@@ -101,7 +101,7 @@ const req = {
 async function run() {
   const code = process.argv[2];
 
-  if (!code) {
+  if (!code || code === "--help" || code === "-h") {
     console.log(`${colors.bright}JS-cURL CLI${colors.reset}`);
     console.log(`Uso: jscurl "await req.post('url', { dado: 1 })"`);
     process.exit(0);

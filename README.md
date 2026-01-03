@@ -4,7 +4,6 @@
   <p align="center">Just swap the import and use a lighter, native implementation without changing any code.</p>
 </p>
 
-
 <p align="center">
   <img src="https://img.shields.io/npm/v/@purecore/reqify?style=flat-square&color=blue" alt="npm version">
   <img src="https://img.shields.io/npm/dm/@purecore/reqify?style=flat-square&color=green" alt="downloads">
@@ -14,9 +13,9 @@
 
 ---
 
-## 🎯 Why Reqify?
+## 🎯 Why one-request-4-all?
 
-Tired of heavy HTTP libraries? **Reqify** is a lightweight, native Node.js fetch implementation that provides the exact same interface as axios. Just change the import and enjoy a smaller bundle size!
+Tired of heavy HTTP libraries? **one-request-4-all** is a lightweight, native Node.js fetch implementation that provides the exact same interface as axios. Just change the import and enjoy a smaller bundle size!
 
 ### ✨ Key Features
 
@@ -68,16 +67,16 @@ bun add @purecore/reqify
 ### Basic Usage
 
 ```typescript
-import reqify from '@purecore/reqify';
+import reqify from "@purecore/reqify";
 
 // GET request
-const response = await reqify.get('https://api.example.com/users');
+const response = await reqify.get("https://api.example.com/users");
 console.log(response.data);
 
 // POST request
-const newUser = await reqify.post('https://api.example.com/users', {
-  name: 'John Doe',
-  email: 'john@example.com'
+const newUser = await reqify.post("https://api.example.com/users", {
+  name: "John Doe",
+  email: "john@example.com",
 });
 ```
 
@@ -85,16 +84,16 @@ const newUser = await reqify.post('https://api.example.com/users', {
 
 ```typescript
 // Before (with axios)
-import axios from 'axios';
+import axios from "axios";
 
 // After (with reqify)
-import reqify from '@purecore/reqify';
+import reqify from "@purecore/reqify";
 
 // Same interface, same usage!
-const response = await reqify.get('/api/users', {
+const response = await reqify.get("/api/users", {
   headers: {
-    'Authorization': 'Bearer token'
-  }
+    Authorization: "Bearer token",
+  },
 });
 ```
 
@@ -122,7 +121,7 @@ await reqify<T>(url, config)
 ### Request Configuration
 
 ```typescript
-interface ReqifyRequestConfig<D = any> {
+interface reqify<D = any> {
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
   headers?: Record<string, string>;
@@ -135,32 +134,32 @@ interface ReqifyRequestConfig<D = any> {
 ### Response Object
 
 ```typescript
-interface ReqifyResponse<T = any, D = any> {
+interface one-request-4-allResponse<T = any, D = any> {
   data: T;
   status: number;
   statusText: string;
   headers: Headers;
-  config: ReqifyRequestConfig<D>;
+  config: reqify<D>;
   request: Response;
 }
 ```
 
 ## 🔧 Auto-Healing
 
-Reqify includes a powerful **auto-healing** system that automatically detects and recovers from common HTTP errors:
+one-request-4-all includes a powerful **auto-healing** system that automatically detects and recovers from common HTTP errors:
 
 ```typescript
 // Auto-healing is enabled by default
-const response = await reqify.get('https://api.example.com/data', {
-  maxRetries: 3,      // Number of retry attempts (default: 3)
-  timeout: 5000,      // Initial timeout in ms (default: 5000)
-  autoHeal: true      // Enable auto-healing (default: true)
+const response = await reqify.get("https://api.example.com/data", {
+  maxRetries: 3, // Number of retry attempts (default: 3)
+  timeout: 5000, // Initial timeout in ms (default: 5000)
+  autoHeal: true, // Enable auto-healing (default: true)
 });
 
 // Check if the request was healed
 if (response.healed) {
-  console.log('✅ Request was automatically healed!');
-  console.log('Message:', response.healMessage);
+  console.log("✅ Request was automatically healed!");
+  console.log("Message:", response.healMessage);
   // Example: "Rate limited - retry after 1000ms"
 }
 ```
@@ -178,14 +177,14 @@ if (response.healed) {
 
 ### Value Creation Heuristic
 
-When validation fails (422 error), Reqify automatically creates values based on the expected type:
+When validation fails (422 error), one-request-4-all automatically creates values based on the expected type:
 
 ```typescript
-import { createValueFromType } from '@purecore/reqify';
+import { createValueFromType } from "@purecore/reqify";
 
-createValueFromType('expected email');  // "example@domain.com"
-createValueFromType('must be number');  // 0
-createValueFromType('expected uuid');   // "00000000-0000-0000-0000-000000000000"
+createValueFromType("expected email"); // "example@domain.com"
+createValueFromType("must be number"); // 0
+createValueFromType("expected uuid"); // "00000000-0000-0000-0000-000000000000"
 ```
 
 📖 **[Read the full Auto-Healing documentation](docs/AUTO_HEALING.md)**
@@ -195,12 +194,12 @@ createValueFromType('expected uuid');   // "00000000-0000-0000-0000-000000000000
 ### Query Parameters
 
 ```typescript
-const response = await reqify.get('https://api.example.com/users', {
+const response = await reqify.get("https://api.example.com/users", {
   params: {
     page: 1,
     limit: 10,
-    active: true
-  }
+    active: true,
+  },
 });
 // GET https://api.example.com/users?page=1&limit=10&active=true
 ```
@@ -208,12 +207,12 @@ const response = await reqify.get('https://api.example.com/users', {
 ### Custom Headers
 
 ```typescript
-const response = await reqify.post('https://api.example.com/users', userData, {
+const response = await reqify.post("https://api.example.com/users", userData, {
   headers: {
-    'Authorization': 'Bearer token123',
-    'Content-Type': 'application/json',
-    'X-API-Key': 'your-api-key'
-  }
+    Authorization: "Bearer token123",
+    "Content-Type": "application/json",
+    "X-API-Key": "your-api-key",
+  },
 });
 ```
 
@@ -221,16 +220,16 @@ const response = await reqify.post('https://api.example.com/users', userData, {
 
 ```typescript
 // JSON (default)
-const jsonData = await reqify.get('/api/data');
+const jsonData = await reqify.get("/api/data");
 
 // Text response
-const textData = await reqify.get('/api/text', {
-  responseType: 'text'
+const textData = await reqify.get("/api/text", {
+  responseType: "text",
 });
 
 // Stream response
-const streamData = await reqify.get('/api/file', {
-  responseType: 'stream'
+const streamData = await reqify.get("/api/file", {
+  responseType: "stream",
 });
 ```
 
@@ -238,7 +237,7 @@ const streamData = await reqify.get('/api/file', {
 
 ```typescript
 try {
-  const response = await reqify.get('/api/users/123');
+  const response = await reqify.get("/api/users/123");
   console.log(response.data);
 } catch (error) {
   if (error.response) {
@@ -247,10 +246,10 @@ try {
     console.log(error.response.data);
   } else if (error.request) {
     // Network error
-    console.log('Network error');
+    console.log("Network error");
   } else {
     // Other error
-    console.log('Error:', error.message);
+    console.log("Error:", error.message);
   }
 }
 ```
@@ -261,20 +260,20 @@ try {
 
 ```typescript
 // Before
-import axios from 'axios';
+import axios from "axios";
 
 // After
-import reqify from '@purecore/reqify';
+import reqify from "@purecore/reqify";
 ```
 
 ### Step 2: Change the usage (if needed)
 
 ```typescript
 // Before
-const response = await axios.get('/api/users');
+const response = await axios.get("/api/users");
 
 // After (same syntax works!)
-const response = await reqify.get('/api/users');
+const response = await reqify.get("/api/users");
 ```
 
 ### Compatibility Notes

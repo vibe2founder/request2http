@@ -1,77 +1,74 @@
 /**
- * Demonstração do Auto-Healing do Reqify
- * 
+ * Demonstração do Auto-Healing do one-request-4-all
+ *
  * Este exemplo mostra como o sistema de auto-healing funciona
  * em diferentes cenários de erro.
  */
 
-import { reqify, asUrl, createValueFromType } from '../src/index.js';
+import { reqify, asUrl, createValueFromType } from "../src/index.js";
 
 // Exemplo 1: Rate Limiting com Retry-After
 async function exemploRateLimit() {
-  console.log('\n=== Exemplo 1: Rate Limiting ===');
-  
+  console.log("\n=== Exemplo 1: Rate Limiting ===");
+
   try {
     const response = await reqify.get(
-      asUrl('https://api.github.com/users/octocat'),
+      asUrl("https://api.github.com/users/octocat"),
       {
         maxRetries: 3,
-        timeout: 5000
+        timeout: 5000,
       }
     );
 
     if (response.healed) {
-      console.log('✅ Requisição curada automaticamente!');
-      console.log('Mensagem:', response.healMessage);
+      console.log("✅ Requisição curada automaticamente!");
+      console.log("Mensagem:", response.healMessage);
     }
 
-    console.log('Status:', response.status);
-    console.log('Dados:', response.data);
+    console.log("Status:", response.status);
+    console.log("Dados:", response.data);
   } catch (error) {
-    console.error('❌ Erro:', error);
+    console.error("❌ Erro:", error);
   }
 }
 
 // Exemplo 2: Timeout Progressivo
 async function exemploTimeout() {
-  console.log('\n=== Exemplo 2: Timeout Progressivo ===');
-  
+  console.log("\n=== Exemplo 2: Timeout Progressivo ===");
+
   try {
-    const response = await reqify.get(
-      asUrl('https://httpbin.org/delay/3'),
-      {
-        timeout: 1000,  // Timeout inicial muito curto
-        maxRetries: 3
-      }
-    );
+    const response = await reqify.get(asUrl("https://httpbin.org/delay/3"), {
+      timeout: 1000, // Timeout inicial muito curto
+      maxRetries: 3,
+    });
 
     if (response.healed) {
-      console.log('✅ Timeout ajustado automaticamente!');
-      console.log('Mensagem:', response.healMessage);
+      console.log("✅ Timeout ajustado automaticamente!");
+      console.log("Mensagem:", response.healMessage);
     }
 
-    console.log('Status:', response.status);
+    console.log("Status:", response.status);
   } catch (error) {
-    console.error('❌ Erro:', error);
+    console.error("❌ Erro:", error);
   }
 }
 
 // Exemplo 3: Criação de Valores por Tipo
 function exemploCreateValueFromType() {
-  console.log('\n=== Exemplo 3: Criação de Valores por Tipo ===');
-  
+  console.log("\n=== Exemplo 3: Criação de Valores por Tipo ===");
+
   const casos = [
-    'expected string',
-    'must be number',
-    'expected boolean',
-    'must be email',
-    'expected url',
-    'must be phone',
-    'expected uuid',
-    'must be date'
+    "expected string",
+    "must be number",
+    "expected boolean",
+    "must be email",
+    "expected url",
+    "must be phone",
+    "expected uuid",
+    "must be date",
   ];
 
-  casos.forEach(mensagem => {
+  casos.forEach((mensagem) => {
     const valor = createValueFromType(mensagem);
     console.log(`"${mensagem}" → ${JSON.stringify(valor)}`);
   });
@@ -79,25 +76,25 @@ function exemploCreateValueFromType() {
 
 // Exemplo 4: Monitoramento de Healings
 async function exemploMonitoramento() {
-  console.log('\n=== Exemplo 4: Monitoramento de Healings ===');
-  
+  console.log("\n=== Exemplo 4: Monitoramento de Healings ===");
+
   const urls = [
-    'https://api.github.com/users/octocat',
-    'https://httpbin.org/status/401',
-    'https://httpbin.org/status/429',
+    "https://api.github.com/users/octocat",
+    "https://httpbin.org/status/401",
+    "https://httpbin.org/status/429",
   ];
 
   for (const url of urls) {
     try {
       const response = await reqify.get(asUrl(url), {
         maxRetries: 2,
-        timeout: 3000
+        timeout: 3000,
       });
 
       console.log(`\nURL: ${url}`);
       console.log(`Status: ${response.status}`);
-      console.log(`Healed: ${response.healed ? '✅' : '❌'}`);
-      
+      console.log(`Healed: ${response.healed ? "✅" : "❌"}`);
+
       if (response.healed) {
         console.log(`Mensagem: ${response.healMessage}`);
       }
@@ -110,122 +107,130 @@ async function exemploMonitoramento() {
 
 // Exemplo 5: Comparação com e sem Auto-Healing
 async function exemploComparacao() {
-  console.log('\n=== Exemplo 5: Com vs Sem Auto-Healing ===');
-  
-  const url = asUrl('https://httpbin.org/status/401');
-  
+  console.log("\n=== Exemplo 5: Com vs Sem Auto-Healing ===");
+
+  const url = asUrl("https://httpbin.org/status/401");
+
   // Sem auto-healing
-  console.log('\n--- Sem Auto-Healing ---');
+  console.log("\n--- Sem Auto-Healing ---");
   try {
     const response = await reqify.get(url, {
       autoHeal: false,
-      maxRetries: 2
+      maxRetries: 2,
     });
-    console.log('Status:', response.status);
+    console.log("Status:", response.status);
   } catch (error: any) {
-    console.log('❌ Falhou imediatamente:', error.message);
+    console.log("❌ Falhou imediatamente:", error.message);
   }
-  
+
   // Com auto-healing
-  console.log('\n--- Com Auto-Healing ---');
+  console.log("\n--- Com Auto-Healing ---");
   try {
     const response = await reqify.get(url, {
       autoHeal: true,
-      maxRetries: 2
+      maxRetries: 2,
     });
-    console.log('Status:', response.status);
-    console.log('Healed:', response.healed);
-    console.log('Mensagem:', response.healMessage);
+    console.log("Status:", response.status);
+    console.log("Healed:", response.healed);
+    console.log("Mensagem:", response.healMessage);
   } catch (error: any) {
-    console.log('❌ Falhou após tentativas:', error.message);
+    console.log("❌ Falhou após tentativas:", error.message);
   }
 }
 
 // Exemplo 6: POST com Validação
 async function exemploValidacao() {
-  console.log('\n=== Exemplo 6: POST com Validação ===');
-  
+  console.log("\n=== Exemplo 6: POST com Validação ===");
+
   try {
     const response = await reqify.post(
-      asUrl('https://httpbin.org/post'),
+      asUrl("https://httpbin.org/post"),
       {
-        name: 'João Silva',
-        email: 'joao@example.com',
-        age: 30
+        name: "João Silva",
+        email: "joao@example.com",
+        age: 30,
       },
       {
         maxRetries: 2,
-        timeout: 5000
+        timeout: 5000,
       }
     );
 
-    console.log('Status:', response.status);
-    console.log('Healed:', response.healed);
-    
+    console.log("Status:", response.status);
+    console.log("Healed:", response.healed);
+
     if (response.healed) {
-      console.log('Mensagem:', response.healMessage);
+      console.log("Mensagem:", response.healMessage);
     }
   } catch (error) {
-    console.error('❌ Erro:', error);
+    console.error("❌ Erro:", error);
   }
 }
 
 // Exemplo 7: Redução de Payload (413)
 async function exemploReducaoPayload() {
-  console.log('\n=== Exemplo 7: Redução de Payload (413) ===');
-  
+  console.log("\n=== Exemplo 7: Redução de Payload (413) ===");
+
   // Simular payload grande com campos opcionais
   const payloadGrande = {
     // Campos essenciais
-    name: 'João Silva',
-    email: 'joao@example.com',
-    
+    name: "João Silva",
+    email: "joao@example.com",
+
     // Campos opcionais que serão removidos se 413
-    description: 'Uma descrição muito longa que aumenta o tamanho do payload...',
+    description:
+      "Uma descrição muito longa que aumenta o tamanho do payload...",
     metadata: {
-      source: 'web',
-      campaign: 'summer2024',
-      extra: 'dados adicionais'
+      source: "web",
+      campaign: "summer2024",
+      extra: "dados adicionais",
     },
-    avatar: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-    tags: ['tag1', 'tag2', 'tag3'],
-    notes: 'Notas adicionais sobre o usuário'
+    avatar:
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    tags: ["tag1", "tag2", "tag3"],
+    notes: "Notas adicionais sobre o usuário",
   };
 
-  console.log('Payload original:', JSON.stringify(payloadGrande).length, 'bytes');
-  console.log('Campos:', Object.keys(payloadGrande).join(', '));
+  console.log(
+    "Payload original:",
+    JSON.stringify(payloadGrande).length,
+    "bytes"
+  );
+  console.log("Campos:", Object.keys(payloadGrande).join(", "));
 
   try {
     const response = await reqify.post(
-      asUrl('https://httpbin.org/post'),
+      asUrl("https://httpbin.org/post"),
       payloadGrande,
       {
         maxRetries: 2,
-        timeout: 5000
+        timeout: 5000,
       }
     );
 
-    console.log('Status:', response.status);
-    console.log('Healed:', response.healed);
-    
+    console.log("Status:", response.status);
+    console.log("Healed:", response.healed);
+
     if (response.healed) {
-      console.log('Mensagem:', response.healMessage);
-      console.log('Campos removidos: description, metadata, avatar, tags, notes');
-      console.log('Campos mantidos: name, email');
+      console.log("Mensagem:", response.healMessage);
+      console.log(
+        "Campos removidos: description, metadata, avatar, tags, notes"
+      );
+      console.log("Campos mantidos: name, email");
     }
   } catch (error) {
-    console.error('❌ Erro:', error);
+    console.error("❌ Erro:", error);
   }
 }
 
 // Executar todos os exemplos
 async function main() {
-  console.log('🚀 Demonstração do Auto-Healing do Reqify\n');
-  console.log('=' .repeat(50));
-  
+  console.log("🚀 Demonstração do Auto-Healing do one-request-4-all\n");
+  console.log("=".repeat(50));
+
   // Exemplo 3 não precisa de rede
   exemploCreateValueFromType();
-  
+
   // Exemplos que fazem requisições reais
   await exemploRateLimit();
   await exemploTimeout();
@@ -233,9 +238,9 @@ async function main() {
   await exemploComparacao();
   await exemploValidacao();
   await exemploReducaoPayload();
-  
-  console.log('\n' + '='.repeat(50));
-  console.log('✅ Demonstração concluída!');
+
+  console.log("\n" + "=".repeat(50));
+  console.log("✅ Demonstração concluída!");
 }
 
 // Executar se for o arquivo principal
@@ -250,5 +255,5 @@ export {
   exemploMonitoramento,
   exemploComparacao,
   exemploValidacao,
-  exemploReducaoPayload
+  exemploReducaoPayload,
 };
