@@ -1,24 +1,24 @@
 export type Brand<T, K extends string> = T & {
     __brand: K;
 };
-export type Url = Brand<string, 'Url'>;
-export type HttpMethod = Brand<'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS', 'HttpMethod'>;
-export type StatusCode = Brand<number, 'StatusCode'>;
-export type HeaderName = Brand<string, 'HeaderName'>;
-export type HeaderValue = Brand<string, 'HeaderValue'>;
+export type Url = Brand<string, "Url">;
+export type HttpMethod = Brand<"GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS", "HttpMethod">;
+export type StatusCode = Brand<number, "StatusCode">;
+export type HeaderName = Brand<string, "HeaderName">;
+export type HeaderValue = Brand<string, "HeaderValue">;
 export declare const asUrl: (url: string) => Url;
 export declare const asMethod: (method: string) => HttpMethod;
 export declare const asStatusCode: (status: number) => StatusCode;
 export declare const asHeaderName: (name: string) => HeaderName;
 export declare const asHeaderValue: (value: string) => HeaderValue;
 export type ReqifyHeaders = Record<HeaderName, HeaderValue> | Record<string, string>;
-export interface ReqifyRequestConfig<D = any> {
+export interface reqify<D = any> {
     url: Url;
     method?: HttpMethod;
     headers?: ReqifyHeaders;
     data?: D;
     params?: Record<string, string | number | boolean>;
-    responseType?: 'json' | 'text' | 'stream';
+    responseType?: "json" | "text" | "stream";
     timeout?: number;
     maxRetries?: number;
     retryDelay?: number;
@@ -29,31 +29,31 @@ export interface ReqifyResponse<T = any, D = any> {
     status: StatusCode;
     statusText: string;
     headers: Headers;
-    config: ReqifyRequestConfig<D>;
+    config: reqify<D>;
     request: Response;
     healed?: boolean;
     healMessage?: string;
 }
 export interface ReqifyInstance {
-    <T = any, D = any>(config: ReqifyRequestConfig<D>): Promise<ReqifyResponse<T, D>>;
-    <T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url'>): Promise<ReqifyResponse<T, D>>;
-    get<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
-    delete<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
-    head<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
-    options<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
-    post<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
-    put<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
-    patch<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
+    <T = any, D = any>(config: reqify<D>): Promise<ReqifyResponse<T, D>>;
+    <T = any, D = any>(url: Url, config?: Omit<reqify<D>, "url">): Promise<ReqifyResponse<T, D>>;
+    get<T = any, D = any>(url: Url, config?: Omit<reqify<D>, "url" | "method">): Promise<ReqifyResponse<T, D>>;
+    delete<T = any, D = any>(url: Url, config?: Omit<reqify<D>, "url" | "method">): Promise<ReqifyResponse<T, D>>;
+    head<T = any, D = any>(url: Url, config?: Omit<reqify<D>, "url" | "method">): Promise<ReqifyResponse<T, D>>;
+    options<T = any, D = any>(url: Url, config?: Omit<reqify<D>, "url" | "method">): Promise<ReqifyResponse<T, D>>;
+    post<T = any, D = any>(url: Url, data?: D, config?: Omit<reqify<D>, "url" | "method" | "data">): Promise<ReqifyResponse<T, D>>;
+    put<T = any, D = any>(url: Url, data?: D, config?: Omit<reqify<D>, "url" | "method" | "data">): Promise<ReqifyResponse<T, D>>;
+    patch<T = any, D = any>(url: Url, data?: D, config?: Omit<reqify<D>, "url" | "method" | "data">): Promise<ReqifyResponse<T, D>>;
 }
 export interface HealContext {
     error: any;
-    config: ReqifyRequestConfig;
+    config: reqify;
     response?: Response;
     attempt: number;
 }
 export interface HealResult {
     shouldRetry: boolean;
-    config?: ReqifyRequestConfig;
+    config?: reqify;
     message?: string;
     data?: any;
 }
@@ -63,7 +63,7 @@ export interface HealResult {
  */
 export declare function createValueFromType(errorMessage: string, expectedType?: string): any;
 /**
- * Auto-healer nativo do Reqify
+ * Auto-healer nativo do one-request-4-all
  * Detecta e corrige automaticamente erros comuns
  */
 export declare function autoHeal(context: HealContext): Promise<HealResult>;

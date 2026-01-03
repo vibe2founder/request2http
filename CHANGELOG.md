@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1] - 2026-01-02
+
+### 🐛 Fixed
+- Duplicate identifier 'reqify' by renaming type alias to `ReqifyHeaders`
+- Broken identifiers `one-request-4-all` corrected to `Reqify` naming convention
+- Syntax errors in `src/index.ts`
+
 ## [0.3.0] - 2024-12-06
 
 ### ✨ Added
