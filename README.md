@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://i.imgur.com/zUBBeJx.png" align="center" width=600 />
+<h1 align="center">Fetcher</h1>
   <p align="center"><strong>Native Node.js fetch implementation with axios interface</strong></p>
   <p align="center">Just swap the import and use a lighter, native implementation without changing any code.</p>
 </p>
