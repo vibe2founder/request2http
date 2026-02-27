@@ -13,9 +13,9 @@
 
 ---
 
-## 🎯 Why one-request-4-all?
+## 🎯 Why Fetcher?
 
-Tired of heavy HTTP libraries? **one-request-4-all** is a lightweight, native Node.js fetch implementation that provides the exact same interface as axios. Just change the import and enjoy a smaller bundle size!
+Tired of heavy HTTP libraries? **Fetcher** is a lightweight, native Node.js fetch implementation that provides the exact same interface as axios. Just change the import and enjoy a smaller bundle size!
 
 ### ✨ Key Features
 
@@ -134,7 +134,7 @@ interface reqify<D = any> {
 ### Response Object
 
 ```typescript
-interface one-request-4-allResponse<T = any, D = any> {
+interface FetcherResponse<T = any, D = any> {
   data: T;
   status: number;
   statusText: string;
@@ -146,7 +146,7 @@ interface one-request-4-allResponse<T = any, D = any> {
 
 ## 🔧 Auto-Healing
 
-one-request-4-all includes a powerful **auto-healing** system that automatically detects and recovers from common HTTP errors:
+Fetcher includes a powerful **auto-healing** system that automatically detects and recovers from common HTTP errors:
 
 ```typescript
 // Auto-healing is enabled by default
@@ -177,7 +177,7 @@ if (response.healed) {
 
 ### Value Creation Heuristic
 
-When validation fails (422 error), one-request-4-all automatically creates values based on the expected type:
+When validation fails (422 error), Fetcher automatically creates values based on the expected type:
 
 ```typescript
 import { createValueFromType } from "@purecore/reqify";
@@ -317,3 +317,4 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 <p align="center">
   <a href="https://github.com/suissa/purecore-reqify">⭐ Star us on GitHub</a>
 </p>
+
